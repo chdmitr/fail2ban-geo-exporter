@@ -2,6 +2,7 @@ import importlib
 import yaml
 import configparser
 import sqlite3
+import argparse
 from prometheus_client import make_wsgi_app
 from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from wsgiref.simple_server import make_server
@@ -41,7 +42,7 @@ class F2bCollector(object):
         cur = conn.cursor()
 
         config = configparser.ConfigParser()
-        
+
         # Allow both configs for backwards compatibility
         if not self.f2b_conf_path:
             config.read(self.f2b_conf)
@@ -124,11 +125,16 @@ class F2bCollector(object):
         return gauge
 
 if __name__ == '__main__':
-    with open('conf.yml') as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--conf-file", type=str, default='conf.yml')
+    conf_file = parser.parse_args().conf_file
+
+    with open(conf_file) as f:
         conf = yaml.load(f, Loader=yaml.FullLoader)
 
     REGISTRY.register(F2bCollector(conf))
 
     app = make_wsgi_app()
+    print(f"Starting fail2ban exporter. {conf['server']['listen_address']}:{conf['server']['port']}")
     httpd = make_server(conf['server']['listen_address'], conf['server']['port'], app)
     httpd.serve_forever()
