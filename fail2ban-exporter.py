@@ -61,7 +61,10 @@ class F2bCollector(object):
             self.jails.append(jail)
 
         for jail in self.jails:
-            rows = cur.execute('SELECT ip FROM bans WHERE DATETIME(timeofban + ?, \'unixepoch\') > DATETIME(\'now\') AND jail = ?', [jail.bantime, jail.name]).fetchall()
+            date_query = f"DATETIME(timeofban + '{jail.bantime}', 'unixepoch') > DATETIME('now') AND" \
+                        if jail.bantime != -1 else ""
+            query = f"SELECT ip FROM bips WHERE {date_query} jail = '{jail.name}'"
+            rows = cur.execute(query).fetchall()
             for row in rows:
                 jail.ip_list.append({'ip':row[0]})
 
