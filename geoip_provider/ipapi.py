@@ -3,7 +3,7 @@ import requests
 
 class IPApi:
     def __init__(self, conf):
-        self.conf = conf # cap
+        self.conf = conf  # cap
         self.collected_ip = {}
         self.url = 'https://ipapi.co'
         pass
@@ -24,12 +24,10 @@ class IPApi:
         except Exception as e:
             print(f"Error when determining information about {ip}", e)
             entry = {
-                "Error": {
-                    "city": "",
-                    "country": "",
-                    "latitude": "0",
-                    "longitude": "0"
-                }
+                "city": "Error",
+                "country": "",
+                "latitude": "0",
+                "longitude": "0"
             }
         return entry
 
