@@ -9,11 +9,13 @@ from wsgiref.simple_server import make_server
 from collections import defaultdict
 from pathlib import Path
 
+
 class Jail:
     def __init__(self, name):
         self.name = name
         self.ip_list = []
         self.bantime = 0
+
 
 class F2bCollector(object):
     def __init__(self, conf):
@@ -124,6 +126,7 @@ class F2bCollector(object):
 
         return gauge
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--conf-file", type=str, default='conf.yml')
@@ -136,5 +139,7 @@ if __name__ == '__main__':
 
     app = make_wsgi_app()
     print(f"Starting fail2ban exporter. Listen {conf['server']['listen_address']}:{conf['server']['port']}")
-    httpd = make_server(conf['server']['listen_address'], conf['server']['port'], app)
+    httpd = make_server(host=conf['server']['listen_address'],
+          port=conf['server']['port'],
+          app=app)
     httpd.serve_forever()
