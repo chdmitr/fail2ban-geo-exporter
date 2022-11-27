@@ -67,7 +67,7 @@ class F2bCollector(object):
             query = f"SELECT ip,timeofban FROM bips WHERE {date_query} jail = '{jail.name}'"
             rows = cur.execute(query).fetchall()
             for row in rows:
-                jail.ip_list.append({'ip': row[0], 'timeofban': row[1]})
+                jail.ip_list.append({'ip': row[0], 'timeofban': row[1] * 1000})
 
         conn.close()
 
