@@ -135,6 +135,6 @@ if __name__ == '__main__':
     REGISTRY.register(F2bCollector(conf))
 
     app = make_wsgi_app()
-    print(f"Starting fail2ban exporter.Listen {conf['server']['listen_address']}:{conf['server']['port']}")
+    print(f"Starting fail2ban exporter. Listen {conf['server']['listen_address']}:{conf['server']['port']}")
     httpd = make_server(conf['server']['listen_address'], conf['server']['port'], app)
     httpd.serve_forever()
