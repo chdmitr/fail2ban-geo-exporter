@@ -64,10 +64,10 @@ class F2bCollector(object):
         for jail in self.jails:
             date_query = f"DATETIME(timeofban + '{jail.bantime}', 'unixepoch') > DATETIME('now') AND" \
                         if jail.bantime != -1 else ""
-            query = f"SELECT ip FROM bips WHERE {date_query} jail = '{jail.name}'"
+            query = f"SELECT ip,timeofban FROM bips WHERE {date_query} jail = '{jail.name}'"
             rows = cur.execute(query).fetchall()
             for row in rows:
-                jail.ip_list.append({'ip':row[0]})
+                jail.ip_list.append({'ip': row[0], 'timeofban': row[1]})
 
         conn.close()
 
@@ -87,7 +87,7 @@ class F2bCollector(object):
             yield self.expose_single()
 
     def expose_single(self):
-        metric_labels = ['jail','ip'] + self.extra_labels
+        metric_labels = ['ip', 'jail', 'time_of_ban'] + self.extra_labels
         gauge = GaugeMetricFamily('fail2ban_banned_ip', 'IP banned by fail2ban', labels=metric_labels)
 
         for jail in self.jails:
@@ -95,7 +95,7 @@ class F2bCollector(object):
                 # Skip if GeoProvider.annotate() did not return matching count of labels
                 if len(entry) < len(self.extra_labels) + 1:
                     continue
-                values = [jail.name, entry['ip']] + [ entry[x] for x in self.extra_labels ]
+                values = [entry['ip'], jail.name, str(entry['timeofban'])] + [ entry[x] for x in self.extra_labels ]
                 gauge.add_metric(values, 1)
 
         return gauge
