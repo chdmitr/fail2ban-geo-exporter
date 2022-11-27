@@ -24,7 +24,7 @@ class IPApi:
         except Exception as e:
             print(f"Error when determining information about {ip}", e)
             entry = {
-                    "Error": {
+                "Error": {
                     "city": "",
                     "country": "",
                     "latitude": "0",
