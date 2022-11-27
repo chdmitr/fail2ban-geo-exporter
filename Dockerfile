@@ -9,4 +9,4 @@ COPY geoip_provider ./geoip_provider
 
 COPY fail2ban-exporter.py .
 
-CMD ["python", "./fail2ban-exporter.py"]
+CMD ["python", "-u", "./fail2ban-exporter.py"]
