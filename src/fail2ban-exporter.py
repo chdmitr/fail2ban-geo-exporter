@@ -5,8 +5,8 @@ import argparse
 from prometheus_client import make_wsgi_app
 from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from wsgiref.simple_server import make_server
-from collections import defaultdict
 from pathlib import Path
+from f2b.f2b_client import F2BClient
 
 
 class Jail:
@@ -22,6 +22,7 @@ class F2bCollector(object):
         self.f2b_conf = conf['f2b'].get('conf', '')
         self.f2b_conf_path = conf['f2b'].get('conf_path', '')
         self.f2b_db = conf['f2b']['db']
+        self.f2b_client = F2BClient(sock_path=conf['f2b'].get('socket_path', ''))
         self.jails = []
         self.extra_labels = sorted(self.geo_provider.get_labels())
 
@@ -34,8 +35,8 @@ class F2bCollector(object):
             class_name = 'BaseProvider'
             mod = __import__('geoip_provider.base', fromlist=['BaseProvider'])
 
-        GeoProvider = getattr(mod, class_name)
-        return GeoProvider(conf)
+        geo_provider = getattr(mod, class_name)
+        return geo_provider(conf)
 
     def get_jailed_ips(self):
         self.jails.clear()
@@ -82,15 +83,35 @@ class F2bCollector(object):
             for entry in jail.ip_list:
                 entry.update(self.geo_provider.annotate(entry['ip']))
 
+    def expose_jails_status(self):
+        metric_labels = ['jail']
+        parseKeys = {
+            'Currently failed': ('fail2ban_failed_current', 'Number of currently failed connections.'),
+            'Total failed': ('fail2ban_failed_total', 'Total number of failed connections.'),
+            'Currently banned': ('fail2ban_banned_current', 'Number of currently banned IP addresses.'),
+            'Total banned': ('fail2ban_banned_total', 'Total number of banned IP addresses.')
+        }
+
+        gauges = []
+        jails = self.f2b_client.get_jails()
+        for jail in jails:
+            jail_status = self.f2b_client.get_jail_status(jail)
+            for metric, value in jail_status.items():
+                if metric not in parseKeys.keys():
+                    continue
+                gauge = GaugeMetricFamily(parseKeys[metric][0],
+                                    parseKeys[metric][1],
+                                    labels=metric_labels)
+                gauge.add_metric([jail], value)
+                gauges.append(gauge)
+        return gauges
+
     def collect(self):
         self.get_jailed_ips()
         self.assign_location()
-
-        if conf['geo']['enable_grouping']:
-            yield self.expose_grouped()
-            yield self.expose_jail_summary()
-        else:
-            yield self.expose_single()
+        yield self.expose_single()
+        for gauge in self.expose_jails_status():
+            yield gauge
 
     def expose_single(self):
         metric_labels = ['ip', 'jail', 'time_of_ban'] + self.extra_labels
@@ -107,35 +128,6 @@ class F2bCollector(object):
                 values = [entry['ip'], jail.name, str(entry['timeofban'])] + \
                          [entry[x] for x in self.extra_labels]
                 gauge.add_metric(values, 1)
-
-        return gauge
-
-    def expose_grouped(self):
-        gauge = GaugeMetricFamily('fail2ban_location',
-                                  'Number of currently banned IPs \
-                                      from this location',
-                                  labels=self.extra_labels)
-        grouped = defaultdict(int)
-
-        for jail in self.jails:
-            for entry in jail.ip_list:
-                if not entry:
-                    continue
-                location_key = tuple([entry[x] for x in self.extra_labels])
-                grouped[location_key] += 1
-
-        for labels, count in grouped.items():
-            gauge.add_metric(list(labels), count)
-
-        return gauge
-
-    def expose_jail_summary(self):
-        gauge = GaugeMetricFamily('fail2ban_jailed_ips',
-                                  'Number of currently banned IPs per jail',
-                                  labels=['jail'])
-
-        for jail in self.jails:
-            gauge.add_metric([jail.name], len(jail.ip_list))
 
         return gauge
 
@@ -158,3 +150,15 @@ if __name__ == '__main__':
                         port=conf['server']['port'],
                         app=app)
     httpd.serve_forever()
+
+
+# if __name__ == '__main__':
+#     # ./debug_f2b.sh
+#     #sock_path = '/var/run/fail2ban/fail2ban.sock'
+#     # sudo chmod 777 /mnt/c/chdmitr/git/tools/fail2ban-geo-exporter/debug/sock/fail2ban.sock
+#     sock_path = '/mnt/c/chdmitr/git/tools/fail2ban-geo-exporter/debug/sock/fail2ban.sock'
+#     f2b_client = F2BClient(sock_path)
+#     sshd_banips = f2b_client.get_jail_ban_ips('sshd')
+#     sshd_stat = f2b_client.get_jail_status('sshd')
+#     print(sshd_banips, "\n\n", sshd_stat)
+#     pass

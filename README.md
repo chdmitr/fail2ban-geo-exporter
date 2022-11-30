@@ -13,6 +13,6 @@ geo:
   provider: IPApi
   enable_grouping: False
 f2b:
-  conf_path: '/etc/fail2ban'
-  db: '/var/lib/fail2ban/fail2ban.sqlite3'
+  conf_path: /etc/fail2ban
+  db: /var/lib/fail2ban/fail2ban.sqlite3
 ```
