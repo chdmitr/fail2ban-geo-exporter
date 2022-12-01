@@ -151,5 +151,5 @@ if __name__ == '__main__':
                         app=app)
     try:
         httpd.serve_forever()
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         pass
