@@ -7,6 +7,7 @@ https://github.com/vdcloudcraft/fail2ban-geo-exporter#readme
 - Disable grouping
 - Changed sqlite database query logic to fail2ban default socket request `/var/run/fail2ban/fail2ban.sock`
 
+Works on Fail2Ban v1.0.2
 ## Docker example
 ```bash
 docker run -it --rm \
