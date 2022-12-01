@@ -10,7 +10,7 @@ CSPROTO = {
 
 
 class F2BSocket:
-    def __init__(self, sock_path="/var/run/fail2ban/fail2ban.sock", timeout=-1):
+    def __init__(self, sock_path, timeout=-1):
         self.__csock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.__deftout = self.__csock.gettimeout()
         if timeout != -1:
@@ -60,7 +60,9 @@ class F2BSocket:
             chunk = sock_path.recv(bufsize)
             if not len(chunk):
                 raise socket.error(104, 'Connection reset by peer')
-            if chunk == CSPROTO['END']: break
+            if chunk == CSPROTO['END']:
+                break
             msg = msg + chunk
-            if bufsize < 32768: bufsize <<= 1
+            if bufsize < 32768:
+                bufsize <<= 1
         return loads(msg)

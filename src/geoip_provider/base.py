@@ -1,9 +1,9 @@
 class BaseProvider:
-    def __init__(self, conf):
+    def __init__(self, config: str):
         pass
 
-    def annotate(self, ip):
+    def annotate(self, ip: str) -> dict:
         return {}
 
-    def get_labels(self):
+    def get_labels(self) -> list:
         return []
