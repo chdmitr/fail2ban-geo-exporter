@@ -16,8 +16,9 @@ DEFAULT_SOCKET_PATH = '/f2b-exporter/fail2ban.sock'
 
 class IPAddress:
     def __init__(self, ip: str, date_of_ban: dt,
-                 ban_exp_date: dt, geo_info: dict = {}):
+                 ban_exp_date: dt, ban_time: int, geo_info: dict = {}):
         self.ip_address = ip
+        self.ban_time = ban_time
         self.date_of_ban = date_of_ban
         self.ban_exp_date = ban_exp_date
         self.geo_info = geo_info
@@ -38,6 +39,7 @@ class Jail:
             ip_geo.append(IPAddress(ip=ip_dict.get('ip'),
                                     date_of_ban=ip_dict.get('date_of_ban'),
                                     ban_exp_date=ip_dict.get('ban_exp_date'),
+                                    ban_time=ip_dict.get('ban_time'),
                                     geo_info=geo_info))
         return ip_geo
 
@@ -102,16 +104,28 @@ class F2bCollector:
                 gauges.append(gauge)
         return gauges
 
+    def _convert_to_grafana_date(self, unix_date: dt) -> str:
+        return str(int(unix_date.timestamp())) + '000'
+
     def expose_banned_ips(self, jails: list) -> GaugeMetricFamily:
-        metric_labels = ['ip', 'jail', 'date_of_ban'] + self.extra_labels
+        metric_labels = ['ip', 'jail', 'ban_date', 'ban_end_date'] \
+                        + self.extra_labels
         gauge = GaugeMetricFamily('fail2ban_banned_ip',
                                   'IP banned by fail2ban',
                                   labels=metric_labels)
 
         for jail in jails:
             for ip in jail.ip_list:
-                date_of_ban_unix = str(int(ip.date_of_ban.timestamp())) + '000'
-                values = [ip.ip_address, jail.name, date_of_ban_unix] + \
+
+                ban_date_grf = \
+                    self._convert_to_grafana_date(ip.date_of_ban)
+                ban_end_date_grf = 'Unlimited ban' if ip.ban_time == -1 \
+                    else self._convert_to_grafana_date(ip.ban_exp_date)
+
+                values = [ip.ip_address,
+                          jail.name,
+                          ban_date_grf,
+                          ban_end_date_grf] + \
                          [ip.geo_info.get(x) for x in self.extra_labels]
                 gauge.add_metric(values, 1)
 

@@ -8,7 +8,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class F2BClient:
-    def __init__(self, sock_path: str):
+    def __init__(self, sock_path: str) -> dict:
         print('Using socket file', sock_path)
         if not Path(sock_path).is_socket():
             raise FileNotFoundError(f'{sock_path} not found')
@@ -19,11 +19,13 @@ class F2BClient:
             return s.send(command.split(' '))
 
     def _ban_ips_parse(self, ip_raw: str) -> dict:
-        ip, date, time, _, _, _, exp_date, exp_time = re.split(r'\s+', ip_raw)
+        ip, date, time, _, ban_time, _, exp_date, exp_time \
+            = re.split(r'\s+', ip_raw)
         report = dict(
             ip=ip,
             date_of_ban=dt.strptime(date + ' ' + time, DATE_FORMAT),
-            ban_exp_date=dt.strptime(exp_date + ' ' + exp_time, DATE_FORMAT)
+            ban_exp_date=dt.strptime(exp_date + ' ' + exp_time, DATE_FORMAT),
+            ban_time=int(ban_time)
         )
         return report
 
