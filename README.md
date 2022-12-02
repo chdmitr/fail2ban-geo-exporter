@@ -34,7 +34,7 @@ services:
     volumes:
       - /var/run/fail2ban/fail2ban.sock:/f2b-exporter/fail2ban.sock
       - /path/GeoLite2-City.mmdb:/f2b-exporter/db/GeoLite2-City.mmdb:ro
-      - /path/f2b.yml:/f2b-exporter/conf.yml
+      - /path/conf.yml:/f2b-exporter/conf.yml
     restart: unless-stopped
     networks:
       - monitoring
