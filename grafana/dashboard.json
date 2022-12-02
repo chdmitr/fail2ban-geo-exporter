@@ -50,7 +50,7 @@
       },
       "hideEmpty": false,
       "hideZero": false,
-      "id": 4,
+      "id": 2,
       "initialZoom": "2",
       "locationData": "table",
       "mapCenter": "custom",
@@ -125,7 +125,7 @@
         "x": 15,
         "y": 0
       },
-      "id": 6,
+      "id": 4,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -140,7 +140,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.2.5",
+      "pluginVersion": "9.3.0",
       "targets": [
         {
           "datasource": {
@@ -219,7 +219,7 @@
         "x": 15,
         "y": 4
       },
-      "id": 8,
+      "id": 6,
       "options": {
         "legend": {
           "calcs": [
@@ -242,7 +242,7 @@
             "uid": "${Source}"
           },
           "editorMode": "code",
-          "expr": "fail2ban_failed_current",
+          "expr": "sum(fail2ban_failed_current) by (jail)",
           "hide": false,
           "legendFormat": "{{jail}}",
           "range": true,
@@ -253,187 +253,216 @@
       "type": "timeseries"
     },
     {
-      "columns": [],
       "datasource": {
         "type": "prometheus",
         "uid": "${Source}"
       },
-      "fontSize": "100%",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ban_date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsSystem"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "__name__"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "instance"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "job"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "latitude"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Not found"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "longitude"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Not found"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ban_end_date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsSystem"
+              },
+              {
+                "id": "custom.width"
+              }
+            ]
+          }
+        ]
+      },
       "gridPos": {
-        "h": 10,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 19
       },
-      "id": 10,
-      "links": [],
-      "pageSize": 100,
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 4,
-        "desc": true
+      "id": 8,
+      "options": {
+        "footer": {
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "ban_date"
+          }
+        ]
       },
-      "styles": [
-        {
-          "$$hashKey": "object:1350",
-          "alias": "Time",
-          "align": "auto",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "pattern": "__name__",
-          "type": "hidden"
-        },
-        {
-          "$$hashKey": "object:1351",
-          "alias": "",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "DD-MM-YYYY HH:mm:ss",
-          "decimals": 2,
-          "link": false,
-          "pattern": "Time",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "$$hashKey": "object:1352",
-          "alias": "",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "mappingType": 1,
-          "pattern": "latitude",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "dateTimeFromNow"
-        },
-        {
-          "$$hashKey": "object:1353",
-          "alias": "Address",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "longitude",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "$$hashKey": "object:1356",
-          "alias": "Tx",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 0,
-          "mappingType": 1,
-          "pattern": "Value",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "bytes"
-        },
-        {
-          "$$hashKey": "object:1839",
-          "alias": "",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "job",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "$$hashKey": "object:2116",
-          "alias": "",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "instance",
-          "thresholds": [],
-          "type": "hidden",
-          "unit": "short"
-        },
-        {
-          "$$hashKey": "object:81",
-          "alias": "",
-          "align": "auto",
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "dateFormat": "DD-MM-YYYY HH:mm:ss",
-          "decimals": 2,
-          "mappingType": 1,
-          "pattern": "date_of_ban",
-          "thresholds": [],
-          "type": "date",
-          "unit": "short"
-        }
-      ],
+      "pluginVersion": "9.3.0",
       "targets": [
         {
           "datasource": {
-            "uid": "${DS_PROMETHEUS}"
+            "type": "prometheus",
+            "uid": "${Source}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "fail2ban_banned_ip",
           "format": "table",
-          "hide": false,
           "instant": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{label_name}}",
+          "legendFormat": "__auto",
+          "range": false,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sort_desc(sum(label_replace(openvpn_server_client_received_bytes_total{common_name!=\"UNDEF\"}, \"connection_time\", \"${1}000\", \"connection_time\", \"(.*)\"))by(common_name, connection_time, virtual_address))",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "intervalFactor": 1,
-          "refId": "B"
         }
       ],
-      "title": "Current OpenVPN Clients",
-      "transform": "table",
-      "type": "table-old"
+      "title": "Banned ips",
+      "type": "table"
     }
   ],
+  "refresh": "10s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -441,7 +470,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus_GCORE",
           "value": "Prometheus_GCORE"
         },
@@ -451,6 +480,7 @@
         "name": "Source",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
