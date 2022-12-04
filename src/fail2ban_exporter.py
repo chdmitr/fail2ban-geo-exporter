@@ -7,7 +7,7 @@ from prometheus_client import make_wsgi_app, PROCESS_COLLECTOR, \
 from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from wsgiref.simple_server import make_server
 from f2b.f2b_client import F2BClient
-from datetime import datetime as dt
+from datetime import timezone, datetime as dt
 from pathlib import Path
 
 
@@ -105,7 +105,9 @@ class F2bCollector:
         return gauges
 
     def _convert_to_grafana_date(self, unix_date: dt) -> str:
-        return str(int(unix_date.timestamp())) + '000'
+        # to UTC+0
+        ts_utc = int(unix_date.astimezone(timezone.utc).timestamp())
+        return str(ts_utc) + '000'
 
     def expose_banned_ips(self, jails: list) -> GaugeMetricFamily:
         metric_labels = ['ip', 'jail', 'ban_date', 'ban_end_date'] \
