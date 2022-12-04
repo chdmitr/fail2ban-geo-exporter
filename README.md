@@ -11,10 +11,12 @@ Works on Fail2Ban v1.0.2
 [Grafana dashboard](grafana/dashboard.json) work on Grafana v9.3.0
 ## Docker example
 ```bash
+# Please use your host's timezone to display the correct time
 docker run -it --rm \
     -v ./conf.yml:/f2b-exporter/conf.yml \
     -v /var/run/fail2ban/fail2ban.sock:/f2b-exporter/fail2ban.sock \
     -p 9332:9332 \
+    -e TZ=Europe/London \
     --name fail2ban-geo-exporter \
     chdmitr/fail2ban-geo-exporter 
 ```
@@ -31,6 +33,9 @@ services:
   f2b_exporter:
     image: chdmitr/fail2ban-geo-exporter
     container_name: f2b-exporter
+    # Please use your host's timezone to display the correct time
+    environment:
+      - TZ=Europe/London
     volumes:
       - /var/run/fail2ban/fail2ban.sock:/f2b-exporter/fail2ban.sock
       - /path/GeoLite2-City.mmdb:/f2b-exporter/db/GeoLite2-City.mmdb:ro
