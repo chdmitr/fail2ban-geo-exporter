@@ -4,7 +4,7 @@ https://github.com/vdcloudcraft/fail2ban-geo-exporter#readme
 
 # Changes
 - Added the ability to receive geo-information about IP from https://ipapi.co/. It takes time to poll the current list when starting the exporter
-- Disable grouping
+- Disabled grouping
 - Changed sqlite database query logic to fail2ban default socket request `/var/run/fail2ban/fail2ban.sock`
 
 Works on Fail2Ban v1.0.2  
@@ -53,8 +53,9 @@ server:
 geo:
   enabled: True
   provider: IPApi
-#f2b: # Optional
-#  socket_path: /f2b-exporter/fail2ban.sock # Optional, default value
+# Optional
+# f2b: 
+#   socket_path: /f2b-exporter/fail2ban.sock
 ```
 
 ## Example config for MaxmindDB
