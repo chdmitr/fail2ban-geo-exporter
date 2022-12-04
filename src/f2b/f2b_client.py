@@ -31,7 +31,7 @@ class F2BClient:
 
     def get_jails(self) -> tuple:
         jails_raw = self._send_cmd('status')[1][1][1]
-        return re.split(r',\s+', jails_raw)
+        return re.split(r',\s*', jails_raw)
 
     def get_jail_ban_ips(self, jail: str) -> list[dict]:
         cmd = f'get {jail} banip --with-time'
