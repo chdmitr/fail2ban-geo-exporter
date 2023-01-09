@@ -21,7 +21,7 @@ docker run -it --rm \
     chdmitr/fail2ban-geo-exporter 
 ```
 
-## Docker-copmose example
+## Docker-compose example
 ```yaml
 version: '3.8'
 
