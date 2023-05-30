@@ -3,7 +3,7 @@
 https://github.com/vdcloudcraft/fail2ban-geo-exporter#readme
 
 # Changes
-- Added the ability to receive geo-information about IP from https://ipapi.co/. It takes time to poll the current list when starting the exporter
+- Added the ability to receive geo-information about IP from https://ipapi.co/. It takes time to poll the current list when starting the exporter (**need to register to get access_key**)
 - Disabled grouping
 - Changed sqlite database query logic to fail2ban default socket request `/var/run/fail2ban/fail2ban.sock`
 
@@ -53,7 +53,9 @@ server:
   port: 9332
 geo:
   enabled: True
-  provider: IPApi
+  provider: IPApi  
+  ipapi: 
+    access_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 # Optional
 # f2b: 
 #   socket_path: /f2b-exporter/fail2ban.sock

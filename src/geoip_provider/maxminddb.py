@@ -2,7 +2,7 @@ import geoip2.database
 
 
 class MaxmindDB:
-    def __init__(self, config: str):
+    def __init__(self, config: dict):
         self.db_path = config['geo']['maxmind']['db_path']
         self.on_error = config['geo']['maxmind'].get('on_error', '')
 

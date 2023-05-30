@@ -2,10 +2,11 @@ import requests
 
 
 class IPApi:
-    def __init__(self, config: str):
+    def __init__(self, config: dict):
         self.config = config  # cap
         self.collected_ip = {}
-        self.url = 'https://ipapi.co'
+        self.access_key = config['geo']['ipapi']['access_key']
+        self.url = 'http://api.ipapi.com'
 
     def _parse_field(self, rs_dict: dict, field: str, none_case='Not found'):
         value = rs_dict.get(field)
@@ -16,7 +17,7 @@ class IPApi:
             return self.collected_ip.get(ip)
         try:
             print(f"Get information about {ip} from {self.url}")
-            response = requests.get(f'{self.url}/{ip}/json/').json()
+            response = requests.get(f'{self.url}/{ip}/?access_key={self.access_key}').json()
             entry = dict(
                 city=self._parse_field(response, "city"),
                 country=self._parse_field(response, "country_name"),

@@ -3,4 +3,7 @@ server:
   port: 9332
 geo:
   enabled: true
+  # https://ipapi.com/
   provider: IPApi
+  ipapi:
+    access_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
