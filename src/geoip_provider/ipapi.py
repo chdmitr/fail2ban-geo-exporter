@@ -3,7 +3,7 @@ import requests
 
 class IPApi:
     def __init__(self, config: dict):
-        self.config = config  # cap
+        self.config = config
         self.collected_ip = {}
         self.access_key = config['geo']['ipapi']['access_key']
         self.url = 'http://api.ipapi.com'
@@ -17,7 +17,9 @@ class IPApi:
             return self.collected_ip.get(ip)
         try:
             print(f"Get information about {ip} from {self.url}")
-            response = requests.get(f'{self.url}/{ip}/?access_key={self.access_key}').json()
+            response = requests.get(
+                        f'{self.url}/{ip}/?access_key={self.access_key}'
+                    ).json()
             entry = dict(
                 city=self._parse_field(response, "city"),
                 country=self._parse_field(response, "country_name"),
