@@ -1,0 +1,28 @@
+{
+	"name": "fail2ban-geo-exporter",
+	"image": "python:3.9.15",
+	"initializeCommand": "docker pull python:3.9.15",
+	"runArgs": ["--name", "fge_${localEnv:USER}"],
+	"postAttachCommand": "pip install -r requirements.txt",
+	"shutdownAction": "stopContainer",
+	"mounts": [
+		"type=bind,source=${localEnv:HOME}/.bash_history,target=/root/.bash_history"
+	],
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"upgradePackages": false
+		},
+		"ghcr.io/hwaien/devcontainer-features/match-host-time-zone": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mhutchie.git-graph",
+				"EditorConfig.editorconfig",
+				"ms-python.python",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+}
