@@ -8,7 +8,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class F2BClient:
-    def __init__(self, sock_path: str) -> dict:
+    def __init__(self, sock_path: str):
         print('Using socket file', sock_path)
         if not Path(sock_path).is_socket():
             raise FileNotFoundError(f'{sock_path} not found')
@@ -31,7 +31,7 @@ class F2BClient:
 
     def get_jails(self) -> tuple:
         jails_raw = self._send_cmd('status')[1][1][1]
-        return re.split(r',\s*', jails_raw)
+        return re.split(r',\s*', jails_raw) # type: ignore
 
     def get_jail_ban_ips(self, jail: str) -> list[dict]:
         cmd = f'get {jail} banip --with-time'

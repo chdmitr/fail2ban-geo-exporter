@@ -1,7 +1,7 @@
 import requests
 
 
-class IPApiFree:
+class IPApi_Free:
     def __init__(self, config: dict):
         self.config = config
         self.collected_ip = {}
@@ -13,15 +13,15 @@ class IPApiFree:
 
     def annotate(self, ip: str = '') -> dict:
         if ip in self.collected_ip.keys():
-            return self.collected_ip.get(ip)
+            return self.collected_ip.get(ip) # type: ignore
         try:
             print(f"Get information about {ip} from {self.url}")
             response = requests.get(f'{self.url}/{ip}/json/').json()
             entry = dict(
                 city=self._parse_field(response, "city"),
                 country=self._parse_field(response, "country_name"),
-                latitude=self._parse_field(response, "latitude", 0),
-                longitude=self._parse_field(response, "longitude", 0),
+                latitude=self._parse_field(response, "latitude", '0'),
+                longitude=self._parse_field(response, "longitude", '0'),
             )
             self.collected_ip.update({ip: entry})
         except Exception as e:

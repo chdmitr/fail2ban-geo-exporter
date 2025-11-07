@@ -56,7 +56,7 @@ server:
   port: 9332
 geo:
   enabled: True
-  provider: IPApiFree
+  provider: IPApi_Free
 # Optional
 # f2b:
 #   socket_path: /f2b-exporter/fail2ban.sock
