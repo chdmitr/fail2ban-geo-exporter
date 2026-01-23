@@ -1,4 +1,4 @@
-FROM python:3.9.15-alpine3.16
+FROM python:3.14.2-alpine3.23
 
 WORKDIR /f2b-exporter
 

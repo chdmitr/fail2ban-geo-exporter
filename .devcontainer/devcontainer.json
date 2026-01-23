@@ -1,7 +1,7 @@
 {
 	"name": "fail2ban-geo-exporter",
-	"image": "python:3.9.15",
-	"initializeCommand": "docker pull python:3.9.15",
+	"image": "python:3.14.2-bookworm",
+	"initializeCommand": "docker pull python:3.14.2-bookworm",
 	"runArgs": ["--name", "fge_${localEnv:USER}"],
 	"postAttachCommand": "pip install -r requirements.txt",
 	"shutdownAction": "stopContainer",
